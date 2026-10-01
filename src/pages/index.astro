@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { brand } from '../data/site';
+---
+<BaseLayout title={brand.name} description={brand.positioning}>
+  <main id="main" class="container">
+    <h1>{brand.name}</h1>
+    <p>{brand.positioning}</p>
+  </main>
+</BaseLayout>

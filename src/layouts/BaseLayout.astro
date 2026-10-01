@@ -1,0 +1,24 @@
+---
+import '../styles/global.css';
+import { brand } from '../data/site';
+import Seo from '../components/Seo.astro';
+interface Props { title: string; description: string; }
+const { title, description } = Astro.props;
+---
+<!doctype html>
+<html lang="en-NG">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#241235" />
+    <Seo title={title} description={description} siteUrl={brand.siteUrl} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>
+<style>
+  .skip-link { position: absolute; top: 0.5rem; left: 0.5rem; z-index: 10; padding: 0.75rem 1rem; color: white; background: var(--purple-900); transform: translateY(-150%); }
+  .skip-link:focus { transform: translateY(0); }
+</style>

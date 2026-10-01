@@ -1,0 +1,15 @@
+---
+interface Props { title: string; description: string; siteUrl: string; }
+const { title, description, siteUrl } = Astro.props;
+const canonical = new URL(Astro.url.pathname, siteUrl);
+const isPreview = import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true';
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{isPreview && <meta name="robots" content="noindex, nofollow" />}
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta name="twitter:card" content="summary_large_image" />
