@@ -1,0 +1,37 @@
+---
+import MobileNav from './MobileNav.astro';
+import { brand } from '../data/site';
+import { navItems } from '../data/nav';
+const currentPath = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="brand" href="/" aria-label={`${brand.name} home`}><img src="/images/logo/logo1.jpeg" alt={brand.name} width="1280" height="1280" /><span>{brand.name}</span></a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      {navItems.map((item) => <a href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>{item.label}</a>)}
+      <a class="button" href={brand.whatsappUrl} target="_blank" rel="noreferrer">Enquire</a>
+    </nav>
+    <a class="whatsapp" href={brand.whatsappUrl} target="_blank" rel="noreferrer" aria-label="Enquire on WhatsApp"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.7a8.5 8.5 0 1 1 16.2-4.1Z"/><path d="M8.5 8.2c.4 2.7 2.1 4.4 4.9 5.3"/></svg></a>
+    <MobileNav />
+  </div>
+</header>
+<style>
+  .site-header { position: relative; z-index: 5; background: var(--bg); }
+  .site-header__inner { display: flex; min-height: 76px; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .brand { display: inline-flex; align-items: center; min-width: 0; color: var(--ink); font: 700 1.05rem/1.1 'Space Grotesk', sans-serif; text-decoration: none; }
+  .brand img { width: 64px; height: 64px; object-fit: contain; }
+  .brand span { max-width: 7rem; }
+  .desktop-nav { display: none; }
+  .whatsapp { display: grid; width: 48px; height: 48px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: var(--brand); }
+  .whatsapp svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  @media (min-width: 900px) {
+    .site-header__inner { min-height: 96px; }
+    .brand img { width: 80px; height: 80px; }
+    .brand span { max-width: none; }
+    .desktop-nav { display: flex; align-items: center; gap: clamp(1rem, 2.3vw, 2rem); }
+    .desktop-nav > a:not(.button) { font-size: .98rem; font-weight: 500; text-decoration: none; }
+    .desktop-nav > a[aria-current='page'] { color: var(--brand); text-decoration: underline; text-underline-offset: .4em; }
+    .whatsapp, :global(.menu-trigger), :global(.mobile-menu) { display: none; }
+  }
+  @media (max-width: 599px) { .brand img { width: 54px; height: 54px; } .brand span { font-size: .94rem; } }
+</style>

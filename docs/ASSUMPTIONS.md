@@ -1,8 +1,8 @@
 # Assumptions
 
-- No supplied portfolio copy, logo files, or approved project assets were present in the repository at scaffold time.
+- Approved project copy and project assets were not present at scaffold time. The client later identified `logo/logo1.jpeg` and `logo/logo2.jpeg` as the supplied logo variants.
 - The client must confirm the site spelling “Director TumTum”; the supplied logo lettering is described as “Director Tum Tum”.
 - Email uses the required `hello@example.com` placeholder pending confirmation.
 - The site URL defaults to `https://example.com` until the production domain is supplied.
-- Purple `#5B2A86` is the provisional fallback. It has not been sampled from a supplied logo.
+- The sampled purple from both JPEG logo backgrounds/marks is `#4D0A7D` (RGB 77, 10, 125). These are JPEGs with substantial white/purple padding; they are used as-is. A tight-cropped transparent SVG is required before launch to avoid the padding in layout.
 - Privacy copy will need legal review; no legal compliance claim is made.

@@ -1,0 +1,22 @@
+---
+import { brand } from '../data/site';
+import { navItems } from '../data/nav';
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <a class="footer-brand" href="/" aria-label={`${brand.name} home`}><img src="/images/logo/logo2.jpeg" alt={brand.name} width="1280" height="1280" /></a>
+    <nav aria-label="Footer navigation">{navItems.map((item) => <a href={item.href}>{item.label}</a>)}<a href="/privacy/">Privacy</a></nav>
+    <div class="footer-contact"><a href={brand.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a><a href={`mailto:${brand.email}`}>{brand.email}</a><a href={brand.instagramUrl} target="_blank" rel="noreferrer">Instagram {brand.instagramHandle}</a></div>
+    <p class="copyright">© {new Date().getFullYear()} {brand.name}</p>
+  </div>
+</footer>
+<style>
+  .site-footer { padding-block: var(--space-10) var(--space-6); color: white; background: var(--purple-900); }
+  .footer-grid { display: grid; gap: var(--space-6); }
+  .footer-brand { display: block; width: 120px; height: 120px; }
+  .footer-brand img { width: 100%; height: 100%; object-fit: contain; }
+  nav, .footer-contact { display: grid; justify-items: start; gap: var(--space-2); }
+  nav a, .footer-contact a { min-height: 44px; display: inline-flex; align-items: center; color: white; text-decoration: none; }
+  .copyright { margin: 0; color: #f0eaf5; }
+  @media (min-width: 600px) { .footer-grid { grid-template-columns: 1fr 1fr 1fr; } .copyright { grid-column: 1 / -1; } }
+</style>
