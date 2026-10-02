@@ -1,12 +1,13 @@
 ---
 import { brand } from '../data/site';
 import { navItems } from '../data/nav';
+const emailAvailable = !brand.email.toLowerCase().includes('example.com');
 ---
 <footer class="site-footer">
   <div class="container footer-grid">
     <a class="footer-brand" href="/" aria-label={`${brand.name} home`}><img src="/images/logo/logo2.jpeg" alt={brand.name} width="1280" height="1280" /></a>
     <nav aria-label="Footer navigation">{navItems.map((item) => <a href={item.href}>{item.label}</a>)}<a href="/privacy/">Privacy</a></nav>
-    <div class="footer-contact"><a href={brand.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a><a href={`mailto:${brand.email}`}>{brand.email}</a><a href={brand.instagramUrl} target="_blank" rel="noreferrer">Instagram {brand.instagramHandle}</a></div>
+    <div class="footer-contact"><a href={brand.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a>{emailAvailable && <a href={`mailto:${brand.email}`}>{brand.email}</a>}<a href={brand.instagramUrl} target="_blank" rel="noreferrer">Instagram {brand.instagramHandle}</a></div>
     <p class="copyright">© {new Date().getFullYear()} {brand.name}</p>
   </div>
 </footer>

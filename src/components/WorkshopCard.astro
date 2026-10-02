@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Button from './Button.astro';
+import { formatNaira } from '../utils/format';
+import { formatWorkshopDate } from '../utils/dates';
+import { buildWhatsAppUrl } from '../utils/whatsapp';
+interface Props { workshop: CollectionEntry<'workshops'>; }
+const { workshop } = Astro.props;
+const { data } = workshop;
+const price = typeof data.priceNGN === 'number' ? formatNaira(data.priceNGN) : 'Contact for price';
+const dateLabel = data.startDate ? formatWorkshopDate(data.startDate, data.endDate) : 'Date to be announced';
+const enquiryUrl = buildWhatsAppUrl(data.enquiryMessage);
+---
+<article class:list={['workshop-card', data.draft && 'draft-only']}>
+  <div class="workshop-card__header"><h2>{data.title}</h2><span class={`status status--${data.status}`}>{data.status}</span></div>
+  <p>{data.description}</p>
+  <dl><div><dt>Format</dt><dd>{data.format.replace('-', ' ')}</dd></div><div><dt>Duration</dt><dd>{data.duration}</dd></div><div><dt>Date</dt><dd>{dateLabel}</dd></div><div><dt>Location</dt><dd>{data.location}</dd></div><div><dt>Price</dt><dd>{price}</dd></div></dl>
+  {data.registrationUrl ? <Button href={data.registrationUrl}>Register for {data.title}</Button> : <Button href={enquiryUrl}>Enquire about {data.title}</Button>}
+  {data.draft && <p class="draft-label">DRAFT PLACEHOLDER: replace before launch</p>}
+</article>
+<style>
+  .workshop-card { padding: var(--space-6); border: 1px solid var(--border); border-radius: 16px; background: white; }
+  .workshop-card__header { display: flex; align-items: start; justify-content: space-between; gap: var(--space-3); }
+  h2 { margin: 0; font-size: 1.5rem; }
+  .status { padding: .3rem .6rem; border: 1px solid var(--border); border-radius: 999px; color: var(--ink); font-size: .8rem; text-transform: capitalize; }
+  dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--space-4); margin-block: var(--space-5); }
+  dl div { display: grid; gap: .2rem; }
+  dt { color: var(--ink-muted); font-size: .85rem; }
+  dd { margin: 0; font-weight: 600; text-transform: capitalize; }
+  .draft-label { font-weight: 700; }
+</style>

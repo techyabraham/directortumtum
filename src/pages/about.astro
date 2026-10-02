@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { getCollection } from 'astro:content';
+import { brand } from '../data/site';
+import Button from '../components/Button.astro';
+const credentials = await getCollection('credentials', ({ data }) => !data.draft || import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true');
+const principles = ['Story First', 'Authenticity', 'Intentional Visuals', 'Thoughtful Post-Production'];
+---
+<BaseLayout title={`About | ${brand.name}`} description={brand.positioning}>
+  <main id="main">
+    <section class="about-intro"><div class="container"><SectionHeading eyebrow="About" title="Real stories. Human experiences." level={1} /><p>{brand.name} is a mobile videographer and documentary filmmaker based in Nigeria.</p></div></section>
+    <section class="container principles"><SectionHeading eyebrow="How I work" title="Guided by four principles." /><ul>{principles.map((principle) => <li>{principle}</li>)}</ul></section>
+    {credentials.length > 0 && <section class="container credentials"><SectionHeading eyebrow="Credentials" title="Selected credentials" /><ul>{credentials.map((entry) => <li class:list={[entry.data.draft && 'draft-only']}><strong>{entry.data.title}</strong><span>{entry.data.issuer} · {entry.data.year}</span>{entry.data.draft && <span>DRAFT PLACEHOLDER: replace before launch</span>}</li>)}</ul></section>}
+    <section class="about-cta"><div class="container"><h2>Let’s make something meaningful.</h2><Button href={brand.whatsappUrl} variant="dark">Start a conversation</Button></div></section>
+  </main>
+</BaseLayout>
+<style>
+  .about-intro { padding-block: clamp(4rem, 8vw, 7rem); color: white; background: var(--purple-900); }
+  .about-intro :global(.eyebrow) { color: #f0dffa; }
+  .about-intro p { max-width: 50ch; color: #f0eaf5; font-size: 1.2rem; }
+  .principles, .credentials { padding-block: clamp(3rem, 7vw, 6rem); }
+  .principles ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .principles li { display: grid; min-height: 130px; align-items: end; padding: var(--space-5); border: 1px solid var(--border); border-radius: 14px; font: 600 clamp(1.1rem, 2vw, 1.5rem)/1.2 'Space Grotesk', sans-serif; }
+  .credentials ul { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .credentials li { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .about-cta { padding-block: clamp(3rem, 7vw, 6rem); color: white; background: var(--purple-600); }
+  .about-cta h2 { max-width: 20ch; }
+</style>

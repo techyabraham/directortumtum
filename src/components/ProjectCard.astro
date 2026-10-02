@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+type Project = CollectionEntry<'projects'>;
+interface Props { project: Project; }
+const { project } = Astro.props;
+const { data } = project;
+const categories = data.categories.join(' ');
+---
+<article class:list={['project-card', data.draft && 'draft-only']} data-draft={String(data.draft)} data-categories={categories} data-slug={data.slug}>
+  <a class="project-card__link" href={`/work/${data.slug}/`} aria-label={`View ${data.title}`}>
+    <div class="project-card__poster" style={`--poster-ratio:${data.posterAspect.replace(':',' / ')}`}>
+      <Image src={data.poster} alt={data.posterAlt} widths={[480, 800, 1200]} sizes="(min-width: 1200px) 33vw, (min-width: 600px) 50vw, 100vw" loading="lazy" decoding="async" />
+    </div>
+    <div class="project-card__meta"><div><h3>{data.title}</h3><p>{data.categories.map((category) => category.replaceAll('-', ' ')).join(' · ')}</p></div><span>{data.year ?? 'Film'}</span></div>
+  </a>
+  {data.draft && <p class="draft-label">DRAFT PLACEHOLDER: replace before launch</p>}
+</article>
+<style>
+  .project-card__link { display: block; color: inherit; text-decoration: none; }
+  .project-card__poster { overflow: hidden; aspect-ratio: var(--poster-ratio, 16 / 9); background: #d5d2d8; }
+  .project-card__poster :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 200ms ease-out; }
+  .project-card__link:hover .project-card__poster :global(img) { transform: scale(1.025); }
+  .project-card__meta { display: flex; align-items: start; justify-content: space-between; gap: var(--space-3); padding-block: var(--space-3); }
+  h3 { margin: 0; font-size: 1.25rem; }
+  .project-card__meta p { margin: .25rem 0 0; color: var(--ink-muted); font-size: .9rem; text-transform: capitalize; }
+  .project-card__meta > span { flex: 0 0 auto; color: var(--ink-muted); font-size: .9rem; }
+  .draft-label { margin: 0; color: #514a59; font-size: .78rem; font-weight: 700; }
+</style>

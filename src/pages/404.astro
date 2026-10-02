@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import { brand } from '../data/site';
+---
+<BaseLayout title={`Page not found | ${brand.name}`} description="That page could not be found.">
+  <main id="main" class="container not-found">
+    <p class="eyebrow">404</p>
+    <h1>This page isn’t here.</h1>
+    <p>The link may be old or the address may have a typo.</p>
+    <div><Button href="/work/">Explore the work</Button><Button href="/contact/" variant="secondary">Get in touch</Button></div>
+  </main>
+</BaseLayout>
+<style>
+  .not-found { display: grid; min-height: 58vh; align-content: center; justify-items: start; padding-block: var(--space-10); }
+  .eyebrow { color: var(--brand); font-weight: 700; letter-spacing: .1em; }
+  h1 { margin: 0; font-size: clamp(2.25rem, 1.2rem + 5vw, 5rem); }
+  .not-found > div { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+</style>

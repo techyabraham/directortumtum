@@ -1,0 +1,39 @@
+---
+const categories = ['all', 'mobile-videography', 'documentary', 'short-film', 'brand-story', 'events-weddings', 'social-media'];
+---
+<div class="work-filters" aria-label="Filter films">
+  {categories.map((category) => <button type="button" class="filter-button" data-filter={category} aria-pressed={category === 'all' ? 'true' : 'false'}>{category === 'all' ? 'All work' : category.replaceAll('-', ' ')}</button>)}
+</div>
+<p class="filter-count" aria-live="polite"></p>
+<script>
+  const filters = document.querySelector('.work-filters');
+  const cards = [...document.querySelectorAll<HTMLElement>('.project-card')];
+  const count = document.querySelector<HTMLElement>('.filter-count');
+  function applyFilter(value: string, updateUrl = false) {
+    const shown = cards.filter((card) => {
+      const allowedDraft = card.dataset.draft !== 'true' || document.documentElement.classList.contains('preview-drafts') || import.meta.env.DEV;
+      const visible = allowedDraft && (value === 'all' || (card.dataset.categories ?? '').split(' ').includes(value));
+      card.hidden = !visible;
+      return visible;
+    });
+    filters?.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.filter === value)));
+    if (count) count.textContent = `${shown.length} ${shown.length === 1 ? 'film' : 'films'}`;
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      value === 'all' ? url.searchParams.delete('category') : url.searchParams.set('category', value);
+      history.replaceState({}, '', url);
+    }
+  }
+  const query = new URLSearchParams(location.search).get('category') ?? 'all';
+  applyFilter(query);
+  filters?.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
+    if (button?.dataset.filter) applyFilter(button.dataset.filter, true);
+  });
+</script>
+<style>
+  .work-filters { display: flex; gap: var(--space-2); overflow-x: auto; padding: 2px 2px var(--space-3); }
+  .filter-button { min-height: 44px; flex: 0 0 auto; padding: .55rem 1rem; border: 1px solid var(--border); border-radius: 999px; color: var(--ink); background: var(--surface); font: 500 .92rem/1.2 'DM Sans', sans-serif; text-transform: capitalize; cursor: pointer; }
+  .filter-button[aria-pressed='true'] { border-color: var(--brand); color: white; background: var(--brand); }
+  .filter-count { min-height: 1.5em; margin: 0 0 var(--space-4); color: var(--ink-muted); font-size: .9rem; }
+</style>

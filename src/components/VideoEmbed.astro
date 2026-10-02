@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { data } = project;
+---
+<div class="video-embed" data-provider={data.video.provider} data-id={data.video.id ?? ''} data-title={data.title}>
+  <div class="video-frame" style={`--poster-ratio:${data.posterAspect.replace(':',' / ')}`}>
+    {data.video.provider === 'none' ? <div class="coming-soon"><Image src={data.poster} alt={data.posterAlt} widths={[640, 1200]} sizes="(min-width: 900px) 80vw, 100vw" loading="eager" decoding="async" /><span>Film coming soon</span></div> :
+      <button class="poster-button" type="button" aria-label={`Play ${data.title}`}><Image src={data.poster} alt={data.posterAlt} widths={[640, 1200]} sizes="(min-width: 900px) 80vw, 100vw" loading="eager" decoding="async" /><span class="play-icon" aria-hidden="true">▶</span></button>}
+  </div>
+  {data.video.provider !== 'none' && <dialog class="video-dialog" aria-label={`${data.title} video`}><div class="player-frame"></div><button class="video-close" type="button">Close video</button></dialog>}
+</div>
+<script>
+  function initVideoFacades() {
+    document.querySelectorAll<HTMLElement>('.video-embed').forEach((facade) => {
+      if (facade.dataset.initialized) return;
+      facade.dataset.initialized = 'true';
+      const button = facade.querySelector<HTMLButtonElement>('.poster-button');
+      const dialog = facade.querySelector<HTMLDialogElement>('.video-dialog');
+      const frame = facade.querySelector<HTMLElement>('.player-frame');
+      const close = facade.querySelector<HTMLButtonElement>('.video-close');
+      const provider = facade.dataset.provider;
+      const id = facade.dataset.id;
+      const title = facade.dataset.title ?? 'Film';
+      if (!button || !frame || !id || !['youtube', 'vimeo'].includes(provider ?? '')) return;
+      let iframe: HTMLIFrameElement | undefined;
+      const addPreconnect = () => {
+        const origin = provider === 'youtube' ? 'https://www.youtube-nocookie.com' : 'https://player.vimeo.com';
+        if (!document.querySelector(`link[rel="preconnect"][href="${origin}"]`)) {
+          const link = document.createElement('link'); link.rel = 'preconnect'; link.href = origin; document.head.append(link);
+        }
+      };
+      button.addEventListener('pointerenter', addPreconnect, { once: true });
+      button.addEventListener('focus', addPreconnect, { once: true });
+      const restore = () => {
+        if (dialog?.open) dialog.close();
+        iframe?.remove(); button.focus();
+      };
+      close?.addEventListener('click', restore);
+      dialog?.addEventListener('cancel', (event) => { event.preventDefault(); restore(); });
+      button.addEventListener('click', () => {
+        iframe = document.createElement('iframe');
+        iframe.title = `${title} video player`;
+        iframe.loading = 'lazy';
+        iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.src = provider === 'youtube'
+          ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0&modestbranding=1&playsinline=1&autoplay=1`
+          : `https://player.vimeo.com/video/${encodeURIComponent(id)}?dnt=1&autoplay=1`;
+        frame.replaceChildren(iframe);
+        dialog?.showModal();
+        iframe.focus();
+      });
+    });
+  }
+  initVideoFacades();
+</script>
+<style>
+  .video-frame { position: relative; overflow: hidden; aspect-ratio: var(--poster-ratio, 16 / 9); background: #d5d2d8; }
+  .video-frame :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .poster-button, .coming-soon { position: absolute; inset: 0; display: grid; width: 100%; height: 100%; place-items: center; padding: 0; border: 0; background: #d5d2d8; }
+  .poster-button { cursor: pointer; }
+  .poster-button :global(img), .coming-soon :global(img) { position: absolute; inset: 0; }
+  .play-icon { position: relative; display: grid; width: 68px; height: 68px; place-items: center; padding-left: 4px; border-radius: 50%; color: white; background: var(--purple-600); font-size: 1.35rem; }
+  .coming-soon span { position: relative; padding: .6rem .9rem; color: var(--ink); background: white; }
+  .video-dialog { position: fixed; inset: 0; width: min(100%, 1440px); max-width: none; max-height: none; aspect-ratio: 16 / 9; margin: auto; padding: 0; overflow: visible; border: 0; background: #000; }
+  .video-dialog::backdrop { background: rgb(20 16 26 / 92%); }
+  .player-frame { position: absolute; inset: 0; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-close { position: absolute; top: -3.5rem; right: 0; min-height: 44px; padding: .5rem .8rem; border: 1px solid white; border-radius: 999px; color: white; background: var(--purple-900); }
+</style>

@@ -1,16 +1,25 @@
 # Contrast report
 
-Phase 1 token pairs (WCAG relative luminance calculation):
+Ratios use the WCAG 2.x sRGB relative-luminance formula. Text pairs meet 4.5:1; focus indicators and component boundaries meet 3:1. Re-run `npm run check:contrast` after changing a token.
 
-| Foreground | Background | Ratio | Status |
-| --- | --- | ---: | --- |
-| `#14101A` | `#FAF8FC` | 17.78:1 | Pass |
-| `#514A59` | `#FAF8FC` | 8.04:1 | Pass |
-| `#FFFFFF` | `#4D0A7D` | 12.69:1 | Pass |
-| `#FFFFFF` | `#41086A` | 14.31:1 | Pass |
-| `#FFFFFF` | `#330653` | 16.26:1 | Pass |
-| `#756E7B` boundary | `#FAF8FC` | 4.66:1 | Pass |
-| `#4D0A7D` focus ring | `#FAF8FC` | 12.69:1 | Pass |
-| `#FFBF69` focus ring | `#4D0A7D` | 6.79:1 | Pass |
+| Use | Foreground | Background | Ratio | Result |
+| --- | --- | --- | ---: | --- |
+| Body text | `#14101A` | Warm off-white `#FAF8FC` | 17.78:1 | Pass |
+| Body text on cards | `#14101A` | White `#FFFFFF` | 18.77:1 | Pass |
+| Muted text | `#514A59` | Warm off-white `#FAF8FC` | 8.04:1 | Pass |
+| Muted text on cards | `#514A59` | White `#FFFFFF` | 8.49:1 | Pass |
+| Brand links and secondary button text | `#4D0A7D` | Warm off-white `#FAF8FC` | 12.02:1 | Pass |
+| Brand links and secondary button text | `#4D0A7D` | White `#FFFFFF` | 12.69:1 | Pass |
+| Primary button text | `#FFFFFF` | Brand purple `#4D0A7D` | 12.69:1 | Pass |
+| Primary button hover text | `#FFFFFF` | Purple hover `#41086A` | 14.31:1 | Pass |
+| Hero body text | `#F0EAF5` | Deep purple `#4D0A7D` | 10.75:1 | Pass |
+| Hero eyebrow | `#F0DFFA` | Deep purple `#4D0A7D` | 10.05:1 | Pass |
+| Input/control boundary | `#756E7B` | Warm off-white `#FAF8FC` | 4.66:1 | Pass |
+| Input/control boundary | `#756E7B` | White `#FFFFFF` | 4.91:1 | Pass |
+| Focus outline on light surfaces | `#4D0A7D` | Warm off-white `#FAF8FC` | 12.02:1 | Pass |
+| Focus outline on deep purple | `#FFBF69` | Deep purple `#4D0A7D` | 7.80:1 | Pass |
+| Selected text | `#4D0A7D` | Amber selection `#FFBF69` | 7.80:1 | Pass |
+| Form errors | `#8B1E2D` | White `#FFFFFF` | 9.05:1 | Pass |
+| Draft poster label | `#514A59` | Neutral grey `#D5D2D8` | 5.68:1 | Pass |
 
-Ratios computed from sRGB relative luminance using the WCAG 2.x formula. White is used for text on brand/deep purple. Purple focus rings are used on light surfaces; amber focus rings are used over deep purple surfaces.
+These are the active text, boundary and focus pairs in the implemented components. Amber is used only as a small focus/selection accent, not for body copy.

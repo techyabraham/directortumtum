@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import WorkshopCard from '../components/WorkshopCard.astro';
+import Button from '../components/Button.astro';
+import { getCollection } from 'astro:content';
+import { brand } from '../data/site';
+import { splitWorkshopEntriesTyped } from '../utils/dates';
+const today = new Date().toISOString().slice(0, 10);
+const workshops = await getCollection('workshops', ({ data }) => !data.draft || import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true');
+const { upcoming, past } = splitWorkshopEntriesTyped(workshops, today);
+const events = upcoming.filter(({ data }) => !data.draft && data.startDate).map(({ data }) => ({
+  '@context': 'https://schema.org', '@type': 'Event', name: data.title, description: data.description,
+  startDate: data.startDate, ...(data.endDate ? { endDate: data.endDate } : {}),
+  eventStatus: data.status === 'cancelled' ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
+  eventAttendanceMode: data.format === 'online' ? 'https://schema.org/OnlineEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
+  location: data.format === 'online' ? { '@type': 'VirtualLocation', url: data.registrationUrl ?? brand.whatsappUrl } : { '@type': 'Place', name: data.location },
+  organizer: { '@type': 'Organization', name: brand.name, url: brand.siteUrl },
+  ...(typeof data.priceNGN === 'number' ? { offers: { '@type': 'Offer', price: data.priceNGN, priceCurrency: 'NGN', url: data.registrationUrl ?? brand.whatsappUrl } } : {}),
+}));
+---
+<BaseLayout title={`Training | ${brand.name}`} description="Training and learning opportunities in mobile filmmaking and documentary storytelling.">
+  {events.map((event) => <script type="application/ld+json" set:html={JSON.stringify(event).replaceAll('<', '\\u003c')} />)}
+  <main id="main">
+    <section class="training-intro"><div class="container"><SectionHeading eyebrow="Training" title="Learn to tell stories with the tools in your hand." level={1} /><p>Training and workshop details will be shared when confirmed.</p><Button href={brand.whatsappUrl} variant="dark">Ask about training</Button></div></section>
+    <section class="container training-content">
+      <SectionHeading eyebrow="Upcoming" title="Workshops" />
+      {upcoming.length ? <div class="workshop-grid">{upcoming.map((workshop) => <WorkshopCard workshop={workshop} />)}</div> : <p>No upcoming workshops have been announced.</p>}
+      {past.length > 0 && <details class="past-workshops"><summary>Past workshops ({past.length})</summary><div class="workshop-grid">{past.map((workshop) => <WorkshopCard workshop={workshop} />)}</div></details>}
+    </section>
+  </main>
+</BaseLayout>
+<style>
+  .training-intro { padding-block: clamp(3rem, 7vw, 6rem); color: white; background: var(--purple-900); }
+  .training-intro :global(.eyebrow) { color: #f0dffa; }
+  .training-intro p { max-width: 55ch; color: #f0eaf5; }
+  .training-content { padding-block: clamp(3rem, 7vw, 6rem); }
+  .workshop-grid { display: grid; gap: var(--space-4); }
+  .past-workshops { margin-top: var(--space-8); }
+  .past-workshops summary { min-height: 48px; cursor: pointer; font-weight: 700; }
+  @media(min-width: 900px) { .workshop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

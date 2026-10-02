@@ -1,0 +1,25 @@
+---
+import Button from './Button.astro';
+import { brand } from '../data/site';
+---
+<section class="hero">
+  <div class="hero__inner container">
+    <p class="hero__eyebrow">Mobile videographer · Documentary filmmaker</p>
+    <h1>{brand.positioning}</h1>
+    <p class="hero__support">Stories, seen with care.</p>
+    <div class="hero__actions"><Button href="/work/">View work</Button><Button href={brand.whatsappUrl} variant="secondary">Enquire</Button></div>
+  </div>
+  <div class="hero__visual" aria-hidden="true"></div>
+</section>
+<style>
+  .hero { position: relative; display: grid; min-height: min(740px, calc(100svh - 76px)); align-items: center; overflow: hidden; color: white; background: var(--purple-900); }
+  .hero__inner { position: relative; z-index: 1; padding-block: clamp(4rem, 8vw, 8rem); }
+  .hero__eyebrow { margin: 0 0 var(--space-5); color: #f0dffa; font-size: .83rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+  h1 { max-width: 15ch; margin: 0; font-size: clamp(2.25rem, 1.2rem + 5vw, 5rem); letter-spacing: -.035em; }
+  .hero__support { margin: var(--space-5) 0 0; color: #f0eaf5; font-size: clamp(1.0625rem, 1rem + .6vw, 1.35rem); }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-7); }
+  .hero__actions :global(.button--secondary) { border-color: white; color: white; }
+  .hero__actions :global(.button--secondary:hover) { color: var(--purple-900); background: white; }
+  .hero__visual { position: absolute; inset: 0 0 0 auto; width: min(65vw, 58rem); pointer-events: none; background: radial-gradient(ellipse at 78% 68%, rgb(255 255 255 / 11%), transparent 62%); }
+  @media (min-width: 900px) { .hero { min-height: min(800px, calc(100svh - 96px)); } }
+</style>

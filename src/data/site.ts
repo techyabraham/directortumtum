@@ -7,4 +7,5 @@ export const brand = {
   email: 'hello@example.com',
   siteUrl: import.meta.env.PUBLIC_SITE_URL || 'https://example.com',
   positioning: 'Real stories. Human experiences. Films that make people feel.',
+  analyticsEnabled: false,
 } as const;

@@ -1,0 +1,73 @@
+---
+import { brand } from '../data/site';
+const emailAvailable = !brand.email.toLowerCase().includes('example.com');
+---
+<section class="enquiry">
+  <h2>Send an enquiry</h2>
+  <p id="form-note">This opens WhatsApp or your email app. Nothing is stored on this site.</p>
+  <form novalidate data-email={emailAvailable ? brand.email : ''} data-brand={brand.name}>
+    <div id="error-summary" class="error-summary" tabindex="-1" hidden></div>
+    <div class="field"><label for="enquiry-name">Your name</label><input id="enquiry-name" name="name" autocomplete="name" required aria-describedby="name-error" /><span class="error" id="name-error"></span></div>
+    <div class="field"><label for="enquiry-type">What is your enquiry about?</label><select id="enquiry-type" name="type" required aria-describedby="type-error"><option value="">Choose an enquiry type</option><option>Film</option><option>Production</option><option>Post-production</option><option>Training</option><option>Other</option></select><span class="error" id="type-error"></span></div>
+    <div class="field"><label for="enquiry-message">Message</label><textarea id="enquiry-message" name="message" rows="5" required aria-describedby="message-error"></textarea><span class="error" id="message-error"></span></div>
+    <div class="form-actions"><button class="button" type="submit">Continue to WhatsApp</button>{emailAvailable && <button class="button button--secondary" type="button" data-email-submit>Send by email instead</button>}</div>
+    {!emailAvailable && (import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true') && <p class="draft-label draft-only">DRAFT PLACEHOLDER: email contact will be available when confirmed.</p>}
+    <p class="error" data-form-result role="status" aria-live="polite"></p>
+  </form>
+</section>
+<script>
+  import { buildWhatsAppUrl } from '../utils/whatsapp';
+  import { buildEnquiryMessage, buildMailtoUrl } from '../utils/enquiry';
+  const form = document.querySelector<HTMLFormElement>('.enquiry form');
+  if (form) {
+    const summary = form.querySelector<HTMLElement>('#error-summary');
+    const result = form.querySelector<HTMLElement>('[data-form-result]');
+    function collect() {
+      const fields = [
+        { input: form!.elements.namedItem('name') as HTMLInputElement, error: form!.querySelector<HTMLElement>('#name-error'), label: 'Your name' },
+        { input: form!.elements.namedItem('type') as HTMLSelectElement, error: form!.querySelector<HTMLElement>('#type-error'), label: 'Enquiry type' },
+        { input: form!.elements.namedItem('message') as HTMLTextAreaElement, error: form!.querySelector<HTMLElement>('#message-error'), label: 'Message' },
+      ];
+      const invalid = fields.filter(({ input }) => !input.value.trim());
+      fields.forEach(({ input, error }) => {
+        const empty = !input.value.trim();
+        input.setAttribute('aria-invalid', String(empty));
+        if (error) error.textContent = empty ? 'This field is required.' : '';
+      });
+      if (summary) {
+        summary.hidden = invalid.length === 0;
+        summary.textContent = invalid.length ? `Please complete: ${invalid.map((field) => field.label).join(', ')}.` : '';
+      }
+      if (invalid.length) { summary?.focus(); return null; }
+      return buildEnquiryMessage(fields[0].input.value, fields[1].input.value, fields[2].input.value);
+    }
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const message = collect();
+      if (!message) return;
+      const target = buildWhatsAppUrl(message);
+      window.open(target, '_blank', 'noopener,noreferrer');
+      if (result) result.textContent = 'Your message is ready in WhatsApp.';
+    });
+    form.querySelector('[data-email-submit]')?.addEventListener('click', () => {
+      const message = collect();
+      if (!message || !form.dataset.email) return;
+      const subject = `Enquiry for ${form.dataset.brand ?? 'the filmmaker'}`;
+      window.location.href = buildMailtoUrl(form.dataset.email, subject, message);
+    });
+  }
+</script>
+<style>
+  .enquiry { max-width: 48rem; padding: var(--space-6); border: 1px solid var(--border); border-radius: 16px; background: white; }
+  h2 { margin-top: 0; }
+  form { display: grid; gap: var(--space-4); }
+  .field { display: grid; gap: .4rem; }
+  label { font-weight: 600; }
+  input, select, textarea { width: 100%; min-height: 48px; padding: .7rem .8rem; border: 1px solid #756e7b; border-radius: 8px; color: var(--ink); background: white; font: inherit; }
+  textarea { resize: vertical; }
+  .error { min-height: 1.3em; color: #8b1e2d; font-size: .9rem; }
+  .error-summary { padding: var(--space-3); border: 2px solid #8b1e2d; color: #681421; }
+  .form-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .form-actions button { cursor: pointer; }
+  .draft-label { color: var(--ink-muted); }
+</style>

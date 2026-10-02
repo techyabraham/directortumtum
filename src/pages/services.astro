@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import Button from '../components/Button.astro';
+import { services } from '../data/services';
+import { brand } from '../data/site';
+const visibleServices = services.filter((group) => !group.draft || import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true');
+---
+<BaseLayout title={`Services | ${brand.name}`} description={`Mobile videography and documentary filmmaking services by ${brand.name}.`}>
+  <main id="main">
+    <section class="intro container"><SectionHeading eyebrow="Services" title="Films made with care and intention." level={1} /><p>Mobile videography and documentary filmmaking.</p></section>
+    <section class="container service-groups" aria-label="Service areas">
+      {visibleServices.length ? <div class="service-grid">{visibleServices.map((group) => <ServiceCard group={group} />)}</div> : <p>Service details are being prepared.</p>}
+    </section>
+    <section class="service-cta"><div class="container"><h2>Tell me about the story you want to tell.</h2><Button href={brand.whatsappUrl} variant="dark">Enquire on WhatsApp</Button></div></section>
+  </main>
+</BaseLayout>
+<style>
+  .intro { padding-block: clamp(3rem, 7vw, 6rem) var(--space-5); }
+  .intro > p { max-width: 55ch; color: var(--ink-muted); }
+  .service-groups { padding-bottom: var(--space-12); }
+  .service-grid { display: grid; gap: var(--space-4); }
+  .service-cta { padding-block: clamp(3rem, 7vw, 6rem); color: white; background: var(--purple-900); }
+  .service-cta h2 { max-width: 22ch; margin-top: 0; }
+  @media(min-width: 800px) { .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

@@ -1,10 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
+import { getCollection } from 'astro:content';
 import { brand } from '../data/site';
+const allProjects = await getCollection('projects');
+const projects = allProjects.filter((project) => !project.data.draft || import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true')
+  .sort((a, b) => a.data.order - b.data.order).filter((project) => project.data.featured).slice(0, 6);
 ---
 <BaseLayout title={brand.name} description={brand.positioning}>
-  <main id="main" class="container">
-    <h1>{brand.name}</h1>
-    <p>{brand.positioning}</p>
+  <main id="main">
+    <Hero />
+    <section class="featured container" aria-labelledby="featured-title">
+      <SectionHeading eyebrow="Selected work" title="Films that bring us closer." id="featured-title" />
+      {projects.length > 0 ? <ProjectGrid projects={projects} /> : <p class="empty">New films will be shared here as they are approved for publication.</p>}
+      <Button href="/work/" variant="secondary">Explore all work</Button>
+    </section>
+    <section class="principle-band"><div class="container"><p>{brand.positioning}</p><a href="/about/">Meet the filmmaker <span aria-hidden="true">↗</span></a></div></section>
+    <section class="home-services container"><SectionHeading eyebrow="What I do" title="Story-led filmmaking, from first idea to final frame." /><p>Mobile videography and documentary filmmaking.</p><Button href="/services/" variant="secondary">Explore services</Button></section>
+    <section class="home-cta"><div class="container"><h2>Have a story worth telling?</h2><p>Start a conversation about your film.</p><Button href={brand.whatsappUrl} variant="dark">Enquire on WhatsApp</Button></div></section>
   </main>
 </BaseLayout>
+<style>
+  .featured, .home-services { padding-block: clamp(4rem, 9vw, 8rem); }
+  .featured :global(.button), .home-services :global(.button) { margin-top: var(--space-7); }
+  .empty { max-width: 60ch; color: var(--ink-muted); }
+  .principle-band { padding-block: clamp(4rem, 8vw, 7rem); color: white; background: var(--purple-900); }
+  .principle-band p { max-width: 16ch; margin: 0 0 var(--space-5); font: 600 clamp(2rem, 5vw, 4.25rem)/1.1 'Space Grotesk', sans-serif; letter-spacing: -.03em; }
+  .principle-band a { color: white; }
+  .home-cta { padding-block: clamp(4rem, 8vw, 7rem); color: white; background: var(--purple-600); }
+  .home-cta h2 { max-width: 15ch; margin: 0; font-size: clamp(1.75rem, 1.1rem + 2.8vw, 3rem); }
+</style>

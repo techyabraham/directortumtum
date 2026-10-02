@@ -1,0 +1,16 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { entry: CollectionEntry<'testimonials'>; }
+const { entry } = Astro.props;
+---
+<figure class:list={['testimonial-card', entry.data.draft && 'draft-only']}>
+  <blockquote>{entry.data.quote}</blockquote>
+  <figcaption><strong>{entry.data.name}</strong><span>{entry.data.roleOrganisation}</span></figcaption>
+  {entry.data.draft && <p class="draft-label">DRAFT PLACEHOLDER: replace before launch</p>}
+</figure>
+<style>
+  .testimonial-card { margin: 0; padding: var(--space-6); border-left: 4px solid var(--brand); background: white; }
+  blockquote { margin: 0 0 var(--space-5); font: 500 1.25rem/1.5 'Space Grotesk', sans-serif; }
+  figcaption { display: grid; gap: .2rem; }
+  figcaption span { color: var(--ink-muted); }
+</style>

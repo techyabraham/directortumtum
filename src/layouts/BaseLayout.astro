@@ -4,18 +4,27 @@ import { brand } from '../data/site';
 import Seo from '../components/Seo.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-interface Props { title: string; description: string; }
-const { title, description } = Astro.props;
+import JsonLd from '../components/JsonLd.astro';
+import Analytics from '../components/Analytics.astro';
+interface Props { title: string; description: string; image?: string; }
+const { title, description, image } = Astro.props;
+const organization = { '@context': 'https://schema.org', '@type': 'Organization', name: brand.name, url: brand.siteUrl, description: brand.positioning, sameAs: [brand.instagramUrl] };
 ---
 <!doctype html>
-<html lang="en-NG">
+<html lang="en-NG" data-preview-deployment={import.meta.env.PUBLIC_PREVIEW === 'true' ? 'true' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#241235" />
+    <meta name="theme-color" content="#4D0A7D" />
+    <link rel="icon" href="/images/logo/logo2.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preload" href="/fonts/space-grotesk-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <Seo title={title} description={description} siteUrl={brand.siteUrl} />
+    <Seo title={title} description={description} siteUrl={brand.siteUrl} image={image} />
+    <JsonLd data={organization} />
+    <Analytics />
+    <script src="../scripts/preview.ts"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -28,4 +37,6 @@ const { title, description } = Astro.props;
   .skip-link { position: absolute; top: 0.5rem; left: 0.5rem; z-index: 10; padding: 0.75rem 1rem; color: white; background: var(--purple-900); transform: translateY(-150%); }
   .skip-link:focus { transform: translateY(0); }
   :global(body.menu-open) { overflow: hidden; }
+  :global(html[data-preview-deployment='true'] .draft-only) { display: none; }
+  :global(html[data-preview-deployment='true'].preview-drafts .draft-only) { display: block; }
 </style>

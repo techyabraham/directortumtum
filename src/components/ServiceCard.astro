@@ -1,0 +1,18 @@
+---
+import type { ServiceGroup } from '../data/services';
+interface Props { group: ServiceGroup; }
+const { group } = Astro.props;
+---
+<article class:list={['service-card', group.draft && 'draft-only']}>
+  <h2>{group.title}</h2>
+  <ul>{group.items.map((item) => <li class:list={[item.draft && 'draft-only']}><h3>{item.title}</h3><p>{item.description}</p></li>)}</ul>
+  {group.draft && <p class="draft-label">DRAFT PLACEHOLDER: replace before launch</p>}
+</article>
+<style>
+  .service-card { padding: var(--space-5); border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+  h2 { margin: 0 0 var(--space-4); font-size: 1.45rem; }
+  ul { display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+  li h3 { margin: 0; font-size: 1.1rem; }
+  li p { margin: .4rem 0 0; color: var(--ink-muted); }
+  .draft-label { margin-bottom: 0; font-weight: 700; }
+</style>

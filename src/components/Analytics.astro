@@ -1,0 +1,5 @@
+---
+import { brand } from '../data/site';
+const token = import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN;
+---
+{brand.analyticsEnabled && token && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token })}></script>}

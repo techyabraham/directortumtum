@@ -1,8 +1,10 @@
 ---
-interface Props { title: string; description: string; siteUrl: string; }
-const { title, description, siteUrl } = Astro.props;
+import { brand } from '../data/site';
+interface Props { title: string; description: string; siteUrl: string; image?: string; }
+const { title, description, siteUrl, image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, siteUrl);
 const isPreview = import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'true';
+const shareImage = new URL(image ?? '/images/og-default.jpg', siteUrl);
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
@@ -12,4 +14,6 @@ const isPreview = import.meta.env.DEV || import.meta.env.PUBLIC_PREVIEW === 'tru
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
+<meta property="og:image" content={shareImage} />
+<meta property="og:image:alt" content={`${brand.name} logo on a deep purple background`} />
 <meta name="twitter:card" content="summary_large_image" />
